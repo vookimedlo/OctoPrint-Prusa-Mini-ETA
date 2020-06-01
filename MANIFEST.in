@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_prusa-mini-eta/templates *
+recursive-include octoprint_prusa-mini-eta/translations *
+recursive-include octoprint_prusa-mini-eta/static *
