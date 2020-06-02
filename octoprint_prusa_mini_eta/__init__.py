@@ -1,9 +1,13 @@
 # coding=utf-8
 
 from __future__ import absolute_import
+
 import re
+import time
 
 import octoprint.plugin
+from octoprint.filemanager.analysis import AnalysisAborted
+from octoprint.filemanager.analysis import GcodeAnalysisQueue
 from octoprint.printer.estimation import PrintTimeEstimator
 
 
@@ -21,15 +25,15 @@ class PrusaMiniPrintTimeEstimator(PrintTimeEstimator):
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         if self.remaining_time is None:
-            return super(PrusaMiniPrintTimeEstimator, self).estimate(progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
+            return super(PrusaMiniPrintTimeEstimator, self).estimate(progress, printTime, cleanedPrintTime,
+                                                                     statisticalTotalPrintTime,
+                                                                     statisticalTotalPrintTimeType)
         else:
             return self.remaining_time, "estimate"
-
 
 class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
                          octoprint.plugin.AssetPlugin,
                          octoprint.plugin.TemplatePlugin):
-
     remaining_time_pattern = re.compile(r'R(\d+)$')
     remaining_time = 0
     print_time_estimator = PrusaMiniPrintTimeEstimator
@@ -74,6 +78,9 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
             )
         )
 
+    def custom_gcode_analysis_queue(self, *args, **kwargs):
+        return dict(gcode=PrusaMiniGcodeAnalysisQueue)
+
     def create_estimator_factory(self, *args, **kwargs):
         return self.print_time_estimator
 
@@ -89,6 +96,40 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
             self._logger.info("New ETA: " + str(self.print_time_estimator.remaining_time))
 
 
+class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
+
+    remaining_time_pattern = re.compile(r'^\s*M73\s+P\d+\s+R(\d+)\s*\r?\n?$')
+
+    def __init__(self, finished_callback):
+        super(PrusaMiniGcodeAnalysisQueue, self).__init__(finished_callback)
+
+    def _do_analysis(self, high_priority=False):
+        try:
+            def throttle():
+                time.sleep(0.01)
+
+            throttle_callback = throttle
+            if high_priority:
+                throttle_callback = None
+
+            result = dict()
+            result = super(PrusaMiniGcodeAnalysisQueue, self)._do_analysis(high_priority)
+
+            with open(self._current.absolute_path, 'r') as f:
+                for line in f:
+                    remaining_time_pattern_result = self.remaining_time_pattern.search(line)
+                    if remaining_time_pattern_result:
+                        result["estimatedPrintTime"] = int(remaining_time_pattern_result.group(1)) * 60
+                        break
+
+            return result
+        except AnalysisAborted as e:
+            raise
+
+    def _do_abort(self):
+        super(PrusaMiniGcodeAnalysisQueue, self)._do_abort()
+
+
 __plugin_name__ = "Prusa Mini ETA Plugin"
 __plugin_pythoncompat__ = ">=3,<4"  # only python 3
 
@@ -100,6 +141,7 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.update_estimation,
+        "octoprint.filemanager.analysis.factory": __plugin_implementation__.custom_gcode_analysis_queue,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
         "octoprint.printer.estimation.factory": __plugin_implementation__.create_estimator_factory,
     }
