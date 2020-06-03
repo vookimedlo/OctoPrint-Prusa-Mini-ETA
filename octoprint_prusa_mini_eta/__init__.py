@@ -1,6 +1,6 @@
 # coding=utf-8
 
-#    Octoprint plugin for retrieving estimated time of printing using the Prusa Mini.
+#    Octoprint plugin for retrieving the estimated time of printing using the Prusa Mini.
 #    Copyright (C) 2020 Michal Duda - github@vookimedlo.cz
 #    https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA
 #
