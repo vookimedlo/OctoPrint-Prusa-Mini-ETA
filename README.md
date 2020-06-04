@@ -9,8 +9,13 @@ There are two methods available for getting the estimated printing time.
 
 1. Read estimated time during the gcode file upload operation.
    The first Prusa Mini ETA code is read and used as the total time required for printing. 
+   
+   ![Approximate Total Print Time][total]
+   
 2. Read the estimated time during the printing.
    All codes being sent to the printer are analyzed and all ETA values are reported back to the Octoprint.
+
+   ![Printing Time Left][left]
 
 If either of the mentioned methods fails then the fallback mechanism shall leverage the original ETA computation.
 
@@ -21,8 +26,10 @@ or manually using this URL:
 
     https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/archive/master.zip
 
---
+----------
 
 [1]: https://octoprint.org/
 [2]: https://www.prusa3d.com/prusaslicer/
 
+[total]: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Approx-Total-Print-Time.png "Approximate Total Print Time"
+[left]: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Print-Time-Left.png "Printing Time Left"
