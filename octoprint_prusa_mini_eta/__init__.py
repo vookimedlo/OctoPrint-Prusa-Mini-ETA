@@ -90,7 +90,6 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
             self._logger.info("New ETA: " + str(self.print_time_estimator.remaining_time))
 
 
-
 __plugin_name__ = "Prusa Mini ETA Plugin"
 __plugin_pythoncompat__ = ">=3,<4"  # only python 3
 
