@@ -22,10 +22,10 @@ tags:
 - prusaslicer
 
 screenshots:
-- url: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Approx-Total-Print-Time.png
+- url: /assets/img/plugins/prusa_mini_eta/Approx-Total-Print-Time.png
   alt: Approximate Total Print Time
   caption: Approximate Total Print Time
-- url: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Print-Time-Left.png
+- url: /assets/img/plugins/prusa_mini_eta/Print-Time-Left.png
   alt: Printing Time Left
   caption: Printing Time Left
 
@@ -72,6 +72,6 @@ This plugin is not configurable.
 [1]: https://octoprint.org/
 [2]: https://www.prusa3d.com/prusaslicer/
 
-[total]: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Approx-Total-Print-Time.png "Approximate Total Print Time"
-[left]: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Print-Time-Left.png "Printing Time Left"
+[total]: https://plugins.octoprint.org/assets/img/plugins/prusa_mini_eta/Approx-Total-Print-Time.png "Approximate Total Print Time"
+[left]: https://plugins.octoprint.org/assets/img/plugins/prusa_mini_eta/Print-Time-Left.png "Printing Time Left"
 
