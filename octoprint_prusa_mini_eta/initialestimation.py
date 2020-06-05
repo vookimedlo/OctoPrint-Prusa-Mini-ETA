@@ -36,10 +36,6 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
             def throttle():
                 time.sleep(0.01)
 
-            throttle_callback = throttle
-            if high_priority:
-                throttle_callback = None
-
             result = super(PrusaMiniGcodeAnalysisQueue, self)._do_analysis(high_priority)
 
             with open(self._current.absolute_path, 'r') as f:
@@ -48,7 +44,8 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
                     if remaining_time_pattern_result:
                         result["estimatedPrintTime"] = int(remaining_time_pattern_result.group(1)) * 60
                         break
-                    throttle()
+                    if high_priority:
+                        throttle()
                     if self._aborted:
                         # If abortion is requested we will not raise AnalysisAborted, but return already
                         # estimatedPrintTime from the base class.
