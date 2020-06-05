@@ -1,7 +1,7 @@
 ---
 layout: plugin
 
-id: prusa-mini-eta
+id: prusa_mini_eta
 title: OctoPrint-Prusa-Mini-ETA
 description: Prusa Mini ETA detection from the gcode files prepared by the Prusa Slicer.
 author: Michal Duda
@@ -20,14 +20,6 @@ tags:
 - prusa
 - prusa mini
 - prusaslicer
-
-screenshots:
-- url: /assets/img/plugins/prusa_mini_eta/Approx-Total-Print-Time.png
-  alt: Approximate Total Print Time
-  caption: Approximate Total Print Time
-- url: /assets/img/plugins/prusa_mini_eta/Print-Time-Left.png
-  alt: Printing Time Left
-  caption: Printing Time Left
 
 featuredimage: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Print-Time-Left.png
 
@@ -72,6 +64,6 @@ This plugin is not configurable.
 [1]: https://octoprint.org/
 [2]: https://www.prusa3d.com/prusaslicer/
 
-[total]: https://plugins.octoprint.org/assets/img/plugins/prusa_mini_eta/Approx-Total-Print-Time.png "Approximate Total Print Time"
-[left]: https://plugins.octoprint.org/assets/img/plugins/prusa_mini_eta/Print-Time-Left.png "Printing Time Left"
+[total]: /assets/img/plugins/prusa_mini_eta/Approx-Total-Print-Time.png "Approximate Total Print Time"
+[left]: /assets/img/plugins/prusa_mini_eta/Print-Time-Left.png "Printing Time Left"
 
