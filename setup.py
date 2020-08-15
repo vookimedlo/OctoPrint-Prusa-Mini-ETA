@@ -30,7 +30,7 @@ plugin_package = "octoprint_prusa_mini_eta"
 plugin_name = "OctoPrint-Prusa-Mini-ETA"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.1.2"
+plugin_version = "0.1.3"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module

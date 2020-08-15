@@ -25,7 +25,7 @@ from octoprint.printer.estimation import PrintTimeEstimator
 class PrusaMiniPrintTimeEstimator(PrintTimeEstimator):
     def __init__(self, job_type):
         super(PrusaMiniPrintTimeEstimator, self).__init__(job_type)
-        self.job_type = job_type
+        self._job_type = job_type
         self.remaining_time = None
 
     @property

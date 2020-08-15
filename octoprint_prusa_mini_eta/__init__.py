@@ -20,17 +20,24 @@
 from __future__ import absolute_import
 
 import re
+from typing import Pattern
+
 import octoprint.plugin
-from octoprint_prusa_mini_eta.liveestimation import PrusaMiniPrintTimeEstimator
+
 from octoprint_prusa_mini_eta.initialestimation import PrusaMiniGcodeAnalysisQueue
+from octoprint_prusa_mini_eta.liveestimation import PrusaMiniPrintTimeEstimator
 
 
 class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
                          octoprint.plugin.AssetPlugin,
-                         octoprint.plugin.TemplatePlugin):
-    remaining_time_pattern = re.compile(r'R(\d+)$')
-    remaining_time = 0
-    print_time_estimator = PrusaMiniPrintTimeEstimator
+                         octoprint.plugin.TemplatePlugin,
+                         octoprint.plugin.StartupPlugin):
+    _remaining_time_pattern: Pattern[str] = re.compile(r'R(\d+)$')
+    _print_time_estimator = PrusaMiniPrintTimeEstimator
+    logger = None
+
+    def on_after_startup(self):
+        self.logger = self._logger
 
     ##~~ SettingsPlugin mixin
 
@@ -73,21 +80,21 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
         )
 
     def custom_gcode_analysis_queue(self, *args, **kwargs):
-        return dict(gcode=PrusaMiniGcodeAnalysisQueue)
+        return dict(gcode=lambda finished_callback: PrusaMiniGcodeAnalysisQueue(finished_callback, self))
 
     def create_estimator_factory(self, *args, **kwargs):
-        return self.print_time_estimator
+        return self._print_time_estimator
 
     def update_estimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         if gcode != "M73":
             return
 
-        remaining_time_result = self.remaining_time_pattern.search(cmd)
+        remaining_time_result = self._remaining_time_pattern.search(cmd)
         if remaining_time_result:
             # ETA needs to be in seconds
             #
-            self.print_time_estimator.remaining_time = int(remaining_time_result.group(1)) * 60
-            self._logger.info("New ETA: " + str(self.print_time_estimator.remaining_time))
+            self._print_time_estimator.remaining_time = int(remaining_time_result.group(1)) * 60
+            self._logger.info("New ETA: " + str(self._print_time_estimator.remaining_time))
 
 
 __plugin_name__ = "Prusa Mini ETA Plugin"
