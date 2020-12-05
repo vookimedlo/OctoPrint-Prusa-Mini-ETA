@@ -46,8 +46,8 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
 
             result = super(PrusaMiniGcodeAnalysisQueue, self)._do_analysis(high_priority)
 
-            with open(self._current.absolute_path, 'r') as f:
-                for line in f:
+            with open(self._current.absolute_path, 'r') as opened_file:
+                for line in opened_file:
                     remaining_time_pattern_result = self._remaining_time_pattern.search(line)
                     if remaining_time_pattern_result:
                         result["estimatedPrintTime"] = int(remaining_time_pattern_result.group(1)) * 60
@@ -61,7 +61,7 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
                         return result
 
             return result
-        except AnalysisAborted as e:
+        except AnalysisAborted as _:
             raise
 
     def _do_abort(self, reenqueue=True):
