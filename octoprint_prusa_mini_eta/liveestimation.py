@@ -45,5 +45,4 @@ class PrusaMiniPrintTimeEstimator(PrintTimeEstimator):
                                                                      cleanedPrintTime,
                                                                      statisticalTotalPrintTime,
                                                                      statisticalTotalPrintTimeType)
-        else:
-            return int(self.remaining_time), "estimate"
+        return int(self.remaining_time), "estimate"
