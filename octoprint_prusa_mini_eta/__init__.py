@@ -81,13 +81,13 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
             )
         )
 
-    def custom_gcode_analysis_queue(self, *args, **kwargs):
+    def custom_gcode_analysis_queue(self, *_, **__):
         return dict(gcode=lambda finished_callback: PrusaMiniGcodeAnalysisQueue(finished_callback, self))
 
-    def create_estimator_factory(self, *args, **kwargs):
+    def create_estimator_factory(self, *_, **__):
         return self._print_time_estimator
 
-    def update_estimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+    def update_estimation(self, comm_instance, phase, cmd, cmd_type, gcode, *_, **__):
         if gcode != "M73":
             return
 

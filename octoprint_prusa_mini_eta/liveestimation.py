@@ -40,7 +40,9 @@ class PrusaMiniPrintTimeEstimator(PrintTimeEstimator):
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         if self.remaining_time is None:
-            return super(PrusaMiniPrintTimeEstimator, self).estimate(progress, printTime, cleanedPrintTime,
+            return super(PrusaMiniPrintTimeEstimator, self).estimate(progress,
+                                                                     printTime,
+                                                                     cleanedPrintTime,
                                                                      statisticalTotalPrintTime,
                                                                      statisticalTotalPrintTimeType)
         else:
