@@ -1,6 +1,8 @@
 # OctoPrint-Prusa-Mini-ETA
 
 ![Python 3](https://img.shields.io/badge/Python-3-infomational?style=plastic&logo=python "Python 3 required")
+[![Code Quality Score](https://www.code-inspector.com/project/16798/score/svg)](https://frontend.code-inspector.com/public/project/16798/OctoPrint-Prusa-Mini-ETA/dashboard)
+[![Code Grade](https://www.code-inspector.com/project/16798/status/svg)](https://frontend.code-inspector.com/public/project/16798/OctoPrint-Prusa-Mini-ETA/dashboard)
 
 
 The [Octoprint][1] plugin for retrieving the estimated time of printing using the Prusa Mini printer.
