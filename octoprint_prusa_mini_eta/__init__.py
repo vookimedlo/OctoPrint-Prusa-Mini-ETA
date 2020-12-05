@@ -25,7 +25,6 @@ import re
 from typing import Pattern
 
 import octoprint.plugin
-
 from octoprint_prusa_mini_eta.initialestimation import PrusaMiniGcodeAnalysisQueue
 from octoprint_prusa_mini_eta.liveestimation import PrusaMiniPrintTimeEstimator
 
@@ -34,6 +33,7 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
                          octoprint.plugin.AssetPlugin,
                          octoprint.plugin.TemplatePlugin,
                          octoprint.plugin.StartupPlugin):
+    """The Octoprint plugin for retrieving estimated time of printing using the Prusa Mini."""
     _remaining_time_pattern: Pattern[str] = re.compile(r'R(\d+)$')
     _print_time_estimator = PrusaMiniPrintTimeEstimator
     logger = None
