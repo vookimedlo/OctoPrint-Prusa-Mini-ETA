@@ -17,6 +17,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# pylint: disable=line-too-long
+
 from __future__ import absolute_import
 
 import re
@@ -53,7 +55,7 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
                     if not high_priority:
                         throttle()
                     if self._aborted:
-                        # If abortion is requested we will not raise AnalysisAborted, but return already
+                        # If abortion is requested do not raise AnalysisAborted, but return already
                         # estimatedPrintTime from the base class.
                         return result
 
