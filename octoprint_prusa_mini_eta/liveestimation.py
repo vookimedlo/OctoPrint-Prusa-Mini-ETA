@@ -25,6 +25,7 @@ from octoprint.printer.estimation import PrintTimeEstimator
 
 
 class PrusaMiniPrintTimeEstimator(PrintTimeEstimator):
+    """Live estimation during the printing."""
     def __init__(self, job_type):
         super(PrusaMiniPrintTimeEstimator, self).__init__(job_type)
         self._job_type = job_type

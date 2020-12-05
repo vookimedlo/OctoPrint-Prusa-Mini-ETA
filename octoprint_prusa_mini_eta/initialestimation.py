@@ -30,6 +30,7 @@ from octoprint.filemanager.analysis import GcodeAnalysisQueue
 
 
 class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
+    """Initial estimation."""
     _remaining_time_pattern: Pattern[str] = re.compile(r'^\s*M73\s+P\d+\s+R(\d+)\s*\r?\n?$')
 
     def __init__(self, finished_callback, eta_plugin):
