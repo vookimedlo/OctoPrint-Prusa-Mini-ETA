@@ -21,7 +21,6 @@
 
 from __future__ import absolute_import
 
-import re
 from typing import Pattern
 
 import octoprint.plugin
@@ -34,7 +33,6 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
                          octoprint.plugin.TemplatePlugin,
                          octoprint.plugin.StartupPlugin):
     """The Octoprint plugin for retrieving estimated time of printing using the Prusa Mini."""
-    _remaining_time_pattern: Pattern[str] = re.compile(r'R(\d+)$')
     _print_time_estimator = PrusaMiniPrintTimeEstimator
     logger = None
 
@@ -91,12 +89,15 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
         if gcode != "M73":
             return
 
-        remaining_time_result = self._remaining_time_pattern.search(cmd)
-        if remaining_time_result:
-            # ETA needs to be in seconds
-            #
-            self._print_time_estimator.remaining_time = int(remaining_time_result.group(1)) * 60
-            self._logger.info("New ETA: " + str(self._print_time_estimator.remaining_time))
+        cmd_args = cmd.split()
+        for cmd_arg in cmd_args:
+
+            if cmd_arg and cmd_arg[0] == "R":
+                # ETA needs to be in seconds
+                #
+                self._print_time_estimator.remaining_time = int(cmd_arg[1:]) * 60
+                self._logger.info("New ETA: " + str(self._print_time_estimator.remaining_time))
+                break
 
 
 __plugin_name__ = "Prusa Mini ETA Plugin"

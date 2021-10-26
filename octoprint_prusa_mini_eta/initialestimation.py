@@ -21,7 +21,6 @@
 
 from __future__ import absolute_import
 
-import re
 import time
 from typing import Pattern
 
@@ -31,7 +30,6 @@ from octoprint.filemanager.analysis import GcodeAnalysisQueue
 
 class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
     """Initial estimation."""
-    _remaining_time_pattern: Pattern[str] = re.compile(r'^\s*M73\s+P\d+\s+R(\d+)\s*\r?\n?$')
 
     def __init__(self, finished_callback, eta_plugin):
         super(PrusaMiniGcodeAnalysisQueue, self).__init__(finished_callback)
@@ -47,12 +45,21 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
             result = super(PrusaMiniGcodeAnalysisQueue, self)._do_analysis(high_priority)
 
             with open(self._current.absolute_path, 'r') as opened_file:
+                found = False
                 for line in opened_file:
-                    remaining_time_pattern_result = self._remaining_time_pattern.search(line)
-                    if remaining_time_pattern_result:
-                        result["estimatedPrintTime"] = int(remaining_time_pattern_result.group(1)) * 60
-                        self._eta_plugin.logger.info("New ETA from the upload: " + str(result["estimatedPrintTime"]))
-                        break
+                    line = line.strip()
+                    if line.startswith("M73"):
+                        self._eta_plugin.logger.info("Found M73")
+                        splited = line.split()
+                        for split_line in splited:
+                            if split_line[0] == "R":
+                                self._eta_plugin.logger.info(f"Remaining {split_line}")
+                                result["estimatedPrintTime"] = int(split_line[1:]) * 60
+                                self._eta_plugin.logger.info("New ETA from the upload: " + str(result["estimatedPrintTime"]))
+                                found = True
+                                break
+                        if found:
+                            break
                     if not high_priority:
                         throttle()
                     if self._aborted:
