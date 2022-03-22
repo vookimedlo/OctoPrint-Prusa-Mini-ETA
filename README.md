@@ -31,12 +31,12 @@ If either of the mentioned methods fails then the fallback mechanism shall lever
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html)
 or manually using this URL:
 
-    https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/archive/master.zip
+    https://github.com/egguy/OctoPrint-Prusa-Mini-ETA/archive/master.zip
 
 ----------
 
 [1]: https://octoprint.org/
 [2]: https://www.prusa3d.com/prusaslicer/
 
-[total]: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Approx-Total-Print-Time.png "Approximate Total Print Time"
-[left]: https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Print-Time-Left.png "Printing Time Left"
+[total]: https://github.com/egguy/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Approx-Total-Print-Time.png "Approximate Total Print Time"
+[left]: https://github.com/egguy/OctoPrint-Prusa-Mini-ETA/raw/master/assets/img/Print-Time-Left.png "Printing Time Left"
