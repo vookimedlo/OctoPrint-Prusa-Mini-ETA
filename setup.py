@@ -32,20 +32,20 @@ plugin_package = "octoprint_prusa_mini_eta"
 plugin_name = "OctoPrint-Prusa-Mini-ETA"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.1.3"
+plugin_version = "0.1.4"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = """Prusa Mini ETA detection from gcode files prepared by the Prusa Slicer."""
+plugin_description = """Prusa Mini/MK3s ETA detection from gcode files prepared by the Prusa Slicer."""
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
-plugin_author = "Michal Duda"
+plugin_author = "Etienne G. - original author: Michal Duda"
 
 # The plugin's author's mail address.
-plugin_author_email = "github@vookimedlo.cz"
+plugin_author_email = "crazypops@gmail.com"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
-plugin_url = "https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA"
+plugin_url = "https://github.com/egguy/OctoPrint-Prusa-Mini-ETA"
 
 # The plugin's license. Can be overwritten within OctoPrint's internal data via __plugin_license__ in the plugin module
 plugin_license = "AGPLv3"

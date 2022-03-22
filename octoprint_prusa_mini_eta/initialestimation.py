@@ -21,7 +21,6 @@
 
 from __future__ import absolute_import
 
-import re
 import time
 from typing import Pattern
 
@@ -31,7 +30,6 @@ from octoprint.filemanager.analysis import GcodeAnalysisQueue
 
 class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
     """Initial estimation."""
-    _remaining_time_pattern: Pattern[str] = re.compile(r'^\s*M73\s+P\d+\s+R(\d+)\s*\r?\n?$')
 
     def __init__(self, finished_callback, eta_plugin):
         super(PrusaMiniGcodeAnalysisQueue, self).__init__(finished_callback)
@@ -46,13 +44,44 @@ class PrusaMiniGcodeAnalysisQueue(GcodeAnalysisQueue):
 
             result = super(PrusaMiniGcodeAnalysisQueue, self)._do_analysis(high_priority)
 
+            silent_mode_enabled = self._eta_plugin._settings.get_boolean(["silent_mode_enabled"])
+            result["silent"] = silent_mode_enabled
+            found_normal_eta = False
+            found_silent_eta = not silent_mode_enabled  # Don't search if not enabled
+
+            # Prusa slicer generate a GCODE in the form with the silent mode
+            # M73 P0 R352  -- Normal Mode
+            # M73 Q0 S352  -- Silent mode
+
             with open(self._current.absolute_path, 'r') as opened_file:
                 for line in opened_file:
-                    remaining_time_pattern_result = self._remaining_time_pattern.search(line)
-                    if remaining_time_pattern_result:
-                        result["estimatedPrintTime"] = int(remaining_time_pattern_result.group(1)) * 60
-                        self._eta_plugin.logger.info("New ETA from the upload: " + str(result["estimatedPrintTime"]))
+                    if found_normal_eta and found_silent_eta:
+                        # Don't continue to parse the file
                         break
+
+                    line = line.strip() # Prevent surprises
+                    if line.startswith("M73"):
+                        self._eta_plugin.logger.info("Found M73: %s", line)
+                        splited = line.split()
+
+                        for split_line in splited[1:]:  # Ignore already found M73
+                            if split_line[0] == "R":
+                                found_normal_eta = True
+                                result["estimatedPrintTime"] = int(split_line[1:]) * 60
+                                self._eta_plugin.logger.info("New ETA from the upload: %s seconds", result["estimatedPrintTime"])
+                                break 
+                            elif split_line[0] == "S":
+                                found_silent_eta = True
+                                result["estimatedPrintTime"] = int(split_line[1:]) * 60
+                                self._eta_plugin.logger.info("New silent ETA from the upload: %s seconds", result["estimatedPrintTime"])
+                                found_silent_eta = True
+                                break
+                        continue
+                    
+                    if found_normal_eta and not found_silent_eta:
+                        self._eta_plugin.logger.debug("Only found normal ETA, don't continue parsing (is silent mode enable in the slicer profile ?)")
+                        break
+
                     if not high_priority:
                         throttle()
                     if self._aborted:

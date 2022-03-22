@@ -20,8 +20,8 @@
 # pylint: disable=line-too-long
 
 from __future__ import absolute_import
+from distutils.log import debug
 
-import re
 from typing import Pattern
 
 import octoprint.plugin
@@ -34,7 +34,6 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
                          octoprint.plugin.TemplatePlugin,
                          octoprint.plugin.StartupPlugin):
     """The Octoprint plugin for retrieving estimated time of printing using the Prusa Mini."""
-    _remaining_time_pattern: Pattern[str] = re.compile(r'R(\d+)$')
     _print_time_estimator = PrusaMiniPrintTimeEstimator
     logger = None
 
@@ -45,8 +44,13 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            # put your plugin's default settings here
+            silent_mode_enabled=False
         )
+
+    def get_template_configs(self):
+        return [
+            dict(type="settings", custom_bindings=False)
+        ]
 
     ##~~ AssetPlugin mixin
 
@@ -72,12 +76,12 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
 
                 # version check: github repository
                 type="github_release",
-                user="vookimedlo",
+                user="egguy",
                 repo="OctoPrint-Prusa-Mini-ETA",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/archive/{target_version}.zip"
+                pip="https://github.com/egguy/OctoPrint-Prusa-Mini-ETA/archive/{target_version}.zip"
             )
         )
 
@@ -91,12 +95,19 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
         if gcode != "M73":
             return
 
-        remaining_time_result = self._remaining_time_pattern.search(cmd)
-        if remaining_time_result:
-            # ETA needs to be in seconds
-            #
-            self._print_time_estimator.remaining_time = int(remaining_time_result.group(1)) * 60
-            self._logger.info("New ETA: " + str(self._print_time_estimator.remaining_time))
+        is_silent = self._settings.get_boolean(["silent_mode_enabled"])
+
+        cmd_args = cmd.split()
+        for cmd_arg in cmd_args[1:]: # Skip M73
+            if cmd_arg and cmd_arg[0] == "R":
+                # ETA needs to be in seconds
+                self._print_time_estimator.remaining_time = int(cmd_arg[1:]) * 60
+                self._logger.info("New ETA: " + str(self._print_time_estimator.remaining_time))
+            if cmd_arg and cmd_arg[0] == "S" and is_silent:
+                # ETA needs to be in seconds
+                self._print_time_estimator.remaining_time = int(cmd_arg[1:]) * 60
+                self._logger.info("New silent ETA: " + str(self._print_time_estimator.remaining_time))
+
 
 
 __plugin_name__ = "Prusa Mini ETA Plugin"
