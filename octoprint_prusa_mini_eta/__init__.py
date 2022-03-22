@@ -20,6 +20,7 @@
 # pylint: disable=line-too-long
 
 from __future__ import absolute_import
+from distutils.log import debug
 
 from typing import Pattern
 
@@ -43,8 +44,13 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            # put your plugin's default settings here
+            silent_mode_enabled=False
         )
+
+    def get_template_configs(self):
+        return [
+            dict(type="settings", custom_bindings=False)
+        ]
 
     ##~~ AssetPlugin mixin
 
@@ -70,12 +76,12 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
 
                 # version check: github repository
                 type="github_release",
-                user="vookimedlo",
+                user="egguy",
                 repo="OctoPrint-Prusa-Mini-ETA",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/vookimedlo/OctoPrint-Prusa-Mini-ETA/archive/{target_version}.zip"
+                pip="https://github.com/egguy/OctoPrint-Prusa-Mini-ETA/archive/{target_version}.zip"
             )
         )
 
@@ -89,15 +95,19 @@ class PrusaMiniETAPlugin(octoprint.plugin.SettingsPlugin,
         if gcode != "M73":
             return
 
-        cmd_args = cmd.split()
-        for cmd_arg in cmd_args:
+        is_silent = self._settings.get_boolean(["silent_mode_enabled"])
 
+        cmd_args = cmd.split()
+        for cmd_arg in cmd_args[1:]: # Skip M73
             if cmd_arg and cmd_arg[0] == "R":
                 # ETA needs to be in seconds
-                #
                 self._print_time_estimator.remaining_time = int(cmd_arg[1:]) * 60
                 self._logger.info("New ETA: " + str(self._print_time_estimator.remaining_time))
-                break
+            if cmd_arg and cmd_arg[0] == "S" and is_silent:
+                # ETA needs to be in seconds
+                self._print_time_estimator.remaining_time = int(cmd_arg[1:]) * 60
+                self._logger.info("New silent ETA: " + str(self._print_time_estimator.remaining_time))
+
 
 
 __plugin_name__ = "Prusa Mini ETA Plugin"
